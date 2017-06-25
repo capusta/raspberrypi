@@ -2,31 +2,28 @@
 set -x
 echo 'Starting'
 
-if [ "$EUID" -ne 0 ]; then
-  echo 'This must be run as root'
+if [ "$EUID" -eq 0 ]; then
+  echo 'This must NOT be run as root'
   exit 1
 fi
-echo apt-get update
-echo apt-get install -y openvpn deluged deluge-console \
+sudo echo apt-get update
+sudo echo apt-get install -y openvpn deluged deluge-console \
                         samba samba-common-bin
-pkill deluged
-
 VPN_CFG=/etc/openvpn/login.conf
 if [ -e $VPN_CFG ]; then
   echo 'Openvpn is configured - check username / password'
 else
   echo 'Setting up generic login credentials'
-  echo 'username' > $VPN_CFG
-  echo 'secretpass' >> $VPN_CFG
-  sed -i.bak 's/^auth-user-pass.*/auth-user-pass login.conf/g' /etc/openvpn/*.ovpn
+  sudo bash -c "echo 'username' > $VPN_CFG"
+  sudo bash -c "echo 'secretpass' >> $VPN_CFG"
+  sudo sed -i.bak 's/^auth-user-pass.*/auth-user-pass login.conf/g' /etc/openvpn/*.ovpn
 fi
 
-deluge-console config set allow_remote True
 ### Deluge client configuration
 DLG_AUTH=/home/pi/.config/deluge/auth
 grep -q "^#setup-complete" $DLG_AUTH
 if [ $? -eq 1 ]; then
-  pkill deluged
+  sudo pkill deluged
   echo 'Configuring deluge auth'
   echo '#setup-complete' > $DLG_AUTH
   echo 'pi:raspberry:10' >> $DLG_AUTH
@@ -34,4 +31,7 @@ else
   echo 'Deluge auth is configured'
 fi
 
-deluged &
+sudo pkill deluged
+sudo chmod -R 0770 /var/log/deluged
+deluged -i 0.0.0.0 -u 0.0.0.0 -l /var/log/deluged/deluge.log
+deluge-console "config -s allow_remote True"
