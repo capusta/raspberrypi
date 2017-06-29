@@ -12,11 +12,11 @@ function suffix(){
 }
 
 function addVPN(){
-  echo '/usr/sbin/openvpn --config Denmark.ovpn' >> /etc/rc.local.bak
+  echo 'ps aux | grep -iq [o]penvpn || cd /etc/openvpn && openvpn --config /etc/openvpn/Denmark.ovpn >> /var/log/vpn.log &' >> /etc/rc.local.bak
 }
 
 function addDeluge(){
-  echo 'TODO'
+  echo 'ps aux | grep -iq [d]eluge || deluged >> /var/log/deluge &' >> /etc/rc.local.bak
 }
 
 prefix
