@@ -20,7 +20,7 @@ else
 fi
 
 ### Deluge client configuration
-DLG_AUTH=/home/pi/.config/deluge/auth
+DLG_AUTH=/root/.config/deluge/auth
 grep -q "^#setup-complete" $DLG_AUTH
 if [ $? -eq 1 ]; then
   sudo pkill deluged
