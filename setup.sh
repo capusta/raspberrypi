@@ -25,8 +25,8 @@ grep -q "^#setup-complete" $DLG_AUTH
 if [ $? -eq 1 ]; then
   sudo pkill deluged
   echo 'Configuring deluge auth'
-  echo '#setup-complete' > $DLG_AUTH
-  echo 'pi:raspberry:10' >> $DLG_AUTH
+  sudo  bash -c "echo '#setup-complete' > $DLG_AUTH"
+  sudo bash -c "echo 'pi:raspberry:10' >> $DLG_AUTH"
 else
   echo 'Deluge auth is configured'
 fi
