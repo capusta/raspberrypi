@@ -35,3 +35,6 @@ sudo pkill deluged
 sudo chmod -R 0770 /var/log/deluged
 deluged -i 0.0.0.0 -u 0.0.0.0 -l /var/log/deluged/deluge.log
 deluge-console "config -s allow_remote True"
+
+sudo bash -c 'echo "*/2 * * * * root /bin/bash $(pwd)/overwatch.sh" > /etc/cron.d/overwatch'
+sudo chown root: /etc/cron.d/overwatch
