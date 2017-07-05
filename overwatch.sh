@@ -1,14 +1,22 @@
 #! /bin/bash
 
+### This should be run as root
 ### Let's keep track on deluge and openvpn, and make sure one
 ### Does not run without the other
 
+
 function log(){
-  logger -t overwatch $1
+  echo "$1"
+  logger -t overwatch "$1"
 }
 
+if [ "$EUID" -ne 0 ]; then
+  log 'This must NOT be run as root'
+  exit 1
+fi
+
 ps -ef | grep -qi "[o]penvpn --config" && OPENVPN=true
-ps -ef | grep -qi "[d]eluged" && DELUGE=true
+pgrep "deluge" && DELUGE=true
 
 if [[ -z $OPENVPN ]]; then
   OLD_IP=$(curl -s ipinfo.io/ip)
@@ -22,7 +30,7 @@ if [[ -z $OPENVPN ]]; then
   NEW_IP=$(curl -s ipinfo.io/ip)
   if [[ "$OLD_IP" == "$NEW_IP" ]]; then
     log "ERROR: IP is not changing when using VPN, exiting"
-    exit 1 
+    exit 1
   else
     log "SUCCESS: IP is set up"
   fi
@@ -38,7 +46,7 @@ fi
 
 
 if [[ -z $DELUGE || -z $OPENVPN ]]; then
-  log 'EIther deluge or Openvpn not running, killing both and exiting'
+  log 'Error: deluge or Openvpn not running, killing both and exiting'
   sudo pkill deluged || true
   sudo pkill openvpn || true
   exit 1
