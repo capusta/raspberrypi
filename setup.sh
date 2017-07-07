@@ -38,3 +38,4 @@ deluge-console "config -s allow_remote True"
 
 sudo bash -c 'echo "*/2 * * * * root /bin/bash $(pwd)/overwatch.sh" > /etc/cron.d/overwatch'
 sudo chown root: /etc/cron.d/overwatch
+sudo bash setup_02_bootup.sh
