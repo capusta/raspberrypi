@@ -4,6 +4,7 @@
 ### Let's keep track on deluge and openvpn, and make sure one
 ### Does not run without the other
 
+#TODO: abiliity to  change the VPN location based on a flag
 
 function log(){
   echo "$1"
