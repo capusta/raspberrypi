@@ -6,15 +6,13 @@
 
 #TODO: abiliity to  change the VPN location based on a flag
 
+# Default Logging
 function log(){
   echo "$1"
   logger -t overwatch "$1"
 }
 
-if [ "$EUID" -ne 0 ]; then
-  log 'This must NOT be run as root'
-  exit 1
-fi
+# Whatever ... we can run as whatever we want
 
 ps -ef | grep -qi "[o]penvpn --config" && OPENVPN=true
 pgrep "deluge" && DELUGE=true
