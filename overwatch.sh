@@ -22,6 +22,25 @@ pgrep "deluge" && DELUGE=true
 BASE='/etc/openvpn'
 PROFILE='Denmark.ovpn'
 
+while [[ $# -ge 1 ]]; do
+    ARG=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    echo "$ARG" | grep -q "\-\-"
+    STS=$?
+    if [[ $STS != "0" ]]; then
+        # Malformed argument
+        shift; continue
+    fi
+    case $ARG in
+        --jp)
+            PROFILE=Japan.ovpn
+            ;;
+        --sw)
+            PROFILE=Sweden.ovpn
+            ;;
+    esac
+    shift
+done
+
 if [[ -z $OPENVPN ]]; then
   OLD_IP=$(curl -s ipinfo.io/ip)
   log "Current IP is $OLD_IP ... starting openvpn"
