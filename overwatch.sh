@@ -14,14 +14,19 @@ function log(){
 
 # Whatever ... we can run as whatever we want
 
+# Check to see if OpenVPN and Deluge daemon are running
 ps -ef | grep -qi "[o]penvpn --config" && OPENVPN=true
 pgrep "deluge" && DELUGE=true
+
+# Set up (randomized?) profile to connect to
+BASE='/etc/openvpn'
+PROFILE='Denmark.ovpn'
 
 if [[ -z $OPENVPN ]]; then
   OLD_IP=$(curl -s ipinfo.io/ip)
   log "Current IP is $OLD_IP ... starting openvpn"
   pushd /etc/openvpn > /dev/null
-    openvpn --config /etc/openvpn/Denmark.ovpn &
+    openvpn --config $BASE/$PROFILE &
     STS=$!
     sleep 6
     ps -ef | grep "$STS" && OPENVPN=true
