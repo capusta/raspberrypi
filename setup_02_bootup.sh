@@ -15,7 +15,7 @@ function suffix(){
 }
 
 function addOverwatch(){
-    echo "/bin/bash $(pwd)/overwatch.sh &" >> "$RC_BACKUP"
+    echo "/bin/bash $(pwd)/overwatch.sh --rand &" >> "$RC_BACKUP"
 }
 
 prefix

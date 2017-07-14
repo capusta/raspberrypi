@@ -37,6 +37,6 @@ deluged -i 0.0.0.0 -u 0.0.0.0 -l /var/log/deluged/deluge.log
 deluge-console "config -s allow_remote True"
 deluge-console plugin --enable YaRSS2
 
-sudo bash -c 'echo "*/2 * * * * root /bin/bash $(pwd)/overwatch.sh" > /etc/cron.d/overwatch'
+sudo bash -c 'echo "*/2 * * * * root /bin/bash $(pwd)/overwatch.sh --rand" > /etc/cron.d/overwatch'
 sudo chown root: /etc/cron.d/overwatch
 sudo bash setup_02_bootup.sh
