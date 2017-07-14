@@ -18,7 +18,6 @@ function log(){
 ps -ef | grep -qi "[o]penvpn --config" && OPENVPN=true
 pgrep "deluge" && DELUGE=true
 
-# Set up (randomized?) profile to connect to
 BASE='/etc/openvpn'
 PROFILE='Denmark.ovpn'
 
@@ -28,6 +27,7 @@ while [[ $# -ge 1 ]]; do
     STS=$?
     if [[ $STS != "0" ]]; then
         # Malformed argument
+        log "Bad argument $ARG (ignoring)"
         shift; continue
     fi
     case $ARG in
@@ -36,6 +36,15 @@ while [[ $# -ge 1 ]]; do
             ;;
         --sw)
             PROFILE=Sweden.ovpn
+            ;;
+        --ch)
+            PROFILE='Switzerland.ovpn'
+            ;;
+        --rand)
+            log "Using --rand option (random vpn tunnel)"
+            pushd $BASE > /dev/null
+            PROFILE=$(ls *.ovpn | grep -v ' ' | shuf -n 1)
+            popd
             ;;
     esac
     shift
@@ -47,12 +56,12 @@ if [[ -z $OPENVPN ]]; then
   pushd /etc/openvpn > /dev/null
     openvpn --config $BASE/$PROFILE &
     STS=$!
-    sleep 6
     ps -ef | grep "$STS" && OPENVPN=true
+    sleep 10
   popd
   NEW_IP=$(curl -s ipinfo.io/ip)
   if [[ "$OLD_IP" == "$NEW_IP" ]]; then
-    log "ERROR: IP is not changing when using VPN, exiting"
+    log "ERROR: new IP $NEW_IP is not changing when using VPN, exiting"
     exit 1
   else
     log "SUCCESS: IP is set up"
