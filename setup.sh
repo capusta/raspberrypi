@@ -16,11 +16,11 @@ else
   echo 'Setting up generic login credentials'
   sudo bash -c "echo 'username' > $VPN_CFG"
   sudo bash -c "echo 'secretpass' >> $VPN_CFG"
-  sudo sed -i.bak 's/^auth-user-pass.*/auth-user-pass login.conf/g' /etc/openvpn/*.ovpn
+  sudo sed -i.bak 's/^auth-user-pass.*/auth-user-pass \/etc\/openvpn\/login.conf/g' /etc/openvpn/*.ovpn
 fi
 
 ### Deluge client configuration
-DLG_AUTH=/root/.config/deluge/auth
+DLG_AUTH=/home/pi/.config/deluge/auth
 grep -q "^#setup-complete" $DLG_AUTH
 if [ $? -eq 1 ]; then
   sudo pkill deluged

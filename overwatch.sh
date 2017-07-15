@@ -69,7 +69,7 @@ if [[ -z $OPENVPN ]]; then
 fi
 
 if [[ -z $DELUGE ]]; then
-  deluged &
+  su - pi -c 'deluged &'
   STS=$!
   sleep 3
   ps -ef | grep "$STS" && DELUGE=true
