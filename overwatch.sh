@@ -52,16 +52,20 @@ done
 
 if [[ -z $OPENVPN ]]; then
   OLD_IP=$(curl -s ipinfo.io/ip)
-  log "Current IP is $OLD_IP ... starting openvpn"
-  pushd /etc/openvpn > /dev/null
-    openvpn --config $BASE/$PROFILE &
+  log "Current IP: $OLD_IP Starting openvpn to $BASE/$PROFILE"
+  pushd $BASE
+    /usr/sbin/openvpn --config $BASE/$PROFILE >> /var/log/vpn.log 2>&1 &
     STS=$!
-    ps -ef | grep "$STS" && OPENVPN=true
     sleep 10
   popd
+  log "woke up, looking for $STS"
+  ps -ef | grep "$STS" && OPENVPN=true
   NEW_IP=$(curl -s ipinfo.io/ip)
+  log "curl command complete."
   if [[ "$OLD_IP" == "$NEW_IP" ]]; then
     log "ERROR: new IP $NEW_IP is not changing when using VPN, exiting"
+    pkill deluged
+    pkill openvpn
     exit 1
   else
     log "SUCCESS: IP is set up"
