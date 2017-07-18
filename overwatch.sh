@@ -1,18 +1,6 @@
 #! /bin/bash
 
-### This should be run as root
-### Let's keep track on deluge and openvpn, and make sure one
-### Does not run without the other
-
-#TODO: abiliity to  change the VPN location based on a flag
-
-# Default Logging
-function log(){
-  echo "$1"
-  logger -t overwatch "$1"
-}
-
-# Whatever ... we can run as whatever we want
+. common.sh
 
 # Check to see if OpenVPN and Deluge daemon are running
 ps -ef | grep -qi "[o]penvpn --config" && OPENVPN=true
