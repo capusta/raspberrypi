@@ -1,14 +1,10 @@
 #! /bin/bash
 set -x
-echo 'Starting'
 
-if [ "$EUID" -eq 0 ]; then
-  echo 'This must NOT be run as root'
-  exit 1
-fi
 sudo echo apt-get update
 sudo echo apt-get install -y openvpn deluged deluge-console \
                         samba samba-common-bin
+SSH_CFG=/etc/ssh/sshd_config
 VPN_CFG=/etc/openvpn/login.conf
 if [ -e $VPN_CFG ]; then
   echo 'Openvpn is configured - check username / password'

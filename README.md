@@ -9,7 +9,7 @@ apt-get update &&
 apt-get install -y git &&
 git clone https://github.com/capusta/raspberrypi.git &&
 cd raspberrypi &&
-bash setup.sh"
+bash setup.sh
 ```
 
 Manual Steps
