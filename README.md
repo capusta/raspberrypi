@@ -15,3 +15,4 @@ bash setup.sh
 Manual Steps
 1.  Modify username and password in `/etc/openvpn/login.conf`
 2.  Modify the tunnel of your choice in `overwatch.sh`
+3.  Modify `/home/pi/.ssh/authorized_keys` to match your own SSH Key

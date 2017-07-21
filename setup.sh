@@ -4,7 +4,12 @@ set -x
 sudo echo apt-get update
 sudo echo apt-get install -y openvpn deluged deluge-console \
                         samba samba-common-bin
+
+### SSH Configuration
 SSH_CFG=/etc/ssh/sshd_config
+sed -i.bak1 's/^PermitRootLogin.*/PermitRootLogin no/g' $SSH_FN
+sed -i.bak2 's/^#PasswordAuthentication.*/PasswordAuthentication no/g' $SSH_FN
+
 VPN_CFG=/etc/openvpn/login.conf
 if [ -e $VPN_CFG ]; then
   echo 'Openvpn is configured - check username / password'
