@@ -76,8 +76,5 @@ if [[ -z $DELUGE || -z $OPENVPN ]]; then
   exit 1
 fi
 
-# Apparently this is how you enable ssh on pixel
-test -e /boot/ssh || touch /boot/ssh
-
 log 'Overwatch complete'
 exit 0

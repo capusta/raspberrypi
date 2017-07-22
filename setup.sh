@@ -7,6 +7,8 @@ sudo echo apt-get install -y openvpn deluged deluge-console \
 
 ### SSH Configuration
 SSH_CFG=/etc/ssh/sshd_config
+# Apparently this is how you enable ssh on pixel
+test -e /boot/ssh || touch /boot/ssh
 sed -i.bak1 's/^PermitRootLogin.*/PermitRootLogin no/g' $SSH_FN
 sed -i.bak2 's/^#PasswordAuthentication.*/PasswordAuthentication no/g' $SSH_FN
 
