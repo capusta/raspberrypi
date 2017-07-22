@@ -6,8 +6,7 @@
 ps -ef | grep -qi "[o]penvpn --config" && OPENVPN=true
 pgrep "deluge" && DELUGE=true
 
-BASE='/etc/openvpn'
-PROFILE='Denmark.ovpn'
+PROFILE='/etc/openvpn/Denmark.ovpn'
 
 while [[ $# -ge 1 ]]; do
     ARG=$(echo "$1" | tr '[:upper:]' '[:lower:]')
@@ -30,9 +29,7 @@ while [[ $# -ge 1 ]]; do
             ;;
         --rand)
             log "Using --rand option (random vpn tunnel)"
-            pushd $BASE > /dev/null
-            PROFILE=$(ls *.ovpn | grep -v ' ' | shuf -n 1)
-            popd
+            PROFILE=$(find /etc/openvpn/*.ovpn | grep -v ' ' | shuf -n 1)
             ;;
     esac
     shift
@@ -40,12 +37,10 @@ done
 
 if [[ -z $OPENVPN ]]; then
   OLD_IP=$(curl -s ipinfo.io/ip)
-  log "Current IP: $OLD_IP Starting openvpn to $BASE/$PROFILE"
-  pushd $BASE
-    /usr/sbin/openvpn --config $BASE/$PROFILE >> /var/log/vpn.log 2>&1 &
-    STS=$!
-    sleep 10
-  popd
+  log "Current IP: $OLD_IP Starting openvpn to $PROFILE"
+  /usr/sbin/openvpn --config $PROFILE >> /var/log/vpn.log 2>&1 &
+  STS=$!
+  sleep 10
   log "woke up, looking for $STS"
   ps -ef | grep "$STS" && OPENVPN=true
   NEW_IP=$(curl -s ipinfo.io/ip)
