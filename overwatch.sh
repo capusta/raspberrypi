@@ -79,6 +79,9 @@ if [[ ! -e $DLG_TCH ]]; then
     MAGNET=$(curl -L ipmagnet.services.cbcdn.com -v | grep -o "magnet.*>M" | \
         head -c-4 | sed 's@+@ @g;s@%@\\x@g' | xargs -0 printf "%b" | \
         sed 's/ /\+/g' | sed 's/\;/\&/g')
+    log "Using magnet Link: $MAGNET"
+    #TODO: Add torrent to deluge and register touch file
+
 fi
 set +e
 
