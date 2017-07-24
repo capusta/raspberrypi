@@ -71,5 +71,16 @@ if [[ -z $DELUGE || -z $OPENVPN ]]; then
   exit 1
 fi
 
+# Keep checking dummy torrent file to ensure our IP is correct
+DLG_TCH=/etc/deluge_torrent_check
+set -e
+if [[ ! -e $DLG_TCH ]]; then
+    log 'Configuring deluge to track public torrent IP'
+    MAGNET=$(curl -L ipmagnet.services.cbcdn.com -v | grep -o "magnet.*>M" | \
+        head -c-4 | sed 's@+@ @g;s@%@\\x@g' | xargs -0 printf "%b" | \
+        sed 's/ /\+/g' | sed 's/\;/\&/g')
+fi
+set +e
+
 log 'Overwatch complete'
 exit 0
