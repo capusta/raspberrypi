@@ -74,7 +74,7 @@ if [[ -z $DELUGE || -z $OPENVPN ]]; then
 fi
 
 # Keep checking dummy torrent file to ensure our IP is correct
-DLG_TCH=/etc/deluge_torrent_check
+DLG_TCH=/tmp/deluge_torrent_check
 set -e
 if [[ ! -e $DLG_TCH ]]; then
     log 'Configuring deluge to track public torrent IP'
@@ -82,8 +82,9 @@ if [[ ! -e $DLG_TCH ]]; then
         head -c-4 | sed 's@+@ @g;s@%@\\x@g' | xargs -0 printf "%b" | \
         sed 's/ /\+/g' | sed 's/\;/\&/g')
     log "Using magnet Link: $MAGNET"
-    #TODO: Add torrent to deluge and register touch file
-
+    su - pi -c "deluge-console add $MAGNET" && touch $DLG_TCH
+else
+    log "$DLG_TCH exists ... deluge is configred?"
 fi
 set +e
 
