@@ -38,9 +38,11 @@ done
 if [[ -z $OPENVPN ]]; then
   OLD_IP=$(curl -s ipinfo.io/ip)
   log "Current IP: $OLD_IP Starting openvpn to $PROFILE"
+  pushd /etc/openvpn > /dev/null
   /usr/sbin/openvpn --config $PROFILE >> /var/log/vpn.log 2>&1 &
   STS=$!
   sleep 10
+  popd
   log "woke up, looking for $STS"
   ps -ef | grep "$STS" && OPENVPN=true
   NEW_IP=$(curl -s ipinfo.io/ip)
