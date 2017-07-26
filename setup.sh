@@ -9,6 +9,8 @@ sudo echo apt-get install -y openvpn deluged deluge-console \
 SSH_CFG=/etc/ssh/sshd_config
 # Apparently this is how you enable ssh on pixel
 test -e /boot/ssh || touch /boot/ssh
+
+# Do not do root login, and enforce ssh keys
 sed -i.bak1 's/^PermitRootLogin.*/PermitRootLogin no/g' $SSH_FN
 sed -i.bak2 's/^#PasswordAuthentication.*/PasswordAuthentication no/g' $SSH_FN
 
@@ -40,6 +42,6 @@ deluged -i 0.0.0.0 -u 0.0.0.0 -l /var/log/deluged/deluge.log
 deluge-console "config -s allow_remote True"
 deluge-console plugin --enable YaRSS2
 
-sudo bash -c 'echo "*/2 * * * * root /bin/bash $(pwd)/overwatch.sh --rand" > /etc/cron.d/overwatch'
+sudo bash -c 'echo "*/2 * * * * root /bin/bash $(pwd)/overwatch.sh" > /etc/cron.d/overwatch'
 sudo chown root: /etc/cron.d/overwatch
 sudo bash setup_02_bootup.sh
