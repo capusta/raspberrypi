@@ -6,34 +6,9 @@
 ps -ef | grep -qi "[o]penvpn --config" && OPENVPN=true
 pgrep "deluge" && DELUGE=true
 
+# Profile is chosen randomly by default ... or flip to override
 PROFILE='/etc/openvpn/Denmark.ovpn'
-
-while [[ $# -ge 1 ]]; do
-    ARG=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-    echo "$ARG" | grep -q "\-\-"
-    STS=$?
-    if [[ $STS != "0" ]]; then
-        # Malformed argument
-        log "Bad argument $ARG (ignoring)"
-        shift; continue
-    fi
-    case $ARG in
-        --jp)
-            PROFILE=Japan.ovpn
-            ;;
-        --sw)
-            PROFILE=Sweden.ovpn
-            ;;
-        --ch)
-            PROFILE='Switzerland.ovpn'
-            ;;
-        --rand)
-            log "Using --rand option (random vpn tunnel)"
-            PROFILE=$(find /etc/openvpn/*.ovpn | grep -v ' ' | shuf -n 1)
-            ;;
-    esac
-    shift
-done
+PROFILE=$(find /etc/openvpn/*.ovpn | grep -v ' ' | shuf -n 1)
 
 if [[ -z $OPENVPN ]]; then
   OLD_IP=$(curl -s ipinfo.io/ip)
