@@ -1,27 +1,20 @@
 #! /bin/bash
-echo 'SCP File Management ... will scp your files somewhere, then remove entry from deluge'
+echo 'SCP File Management ... will scp files from source folder, then remove entry from deluge'
 set -e
 . common.sh
-
 test -e .scp_creds || exit 1
-for i in `cat .scp_creds`; do export $i; done
 
-if [[ -z "${SRC}" ]]; then
-  log "Source location not set"
+# Important to have file '.scp_creds' in exportable format
+for i in `cat .scp_creds | grep -vi "^#"`; do export $i; done
+[ -z "$USR" ]  && log "Warning, User not set.  Defaulting to $USER" && export USR=$USER
+[ -z "$PORT" ] && log "Warning, Port not set.  Defaulting to 22" && export PORT=22
+
+if [[ -z "${SRC}" || -z "${DST}" ]]; then
+  log "SRC folder or DST host not set "
   exit 1
-else
-  log "Source location set: $SRC"
 fi
-touch $SRC/test && rm $SRC/test
-log "Read/Write OK"
-
-if [[ -z "${PORT}" ]]; then
-  export PORT=22
-fi
-
-if [[ -z "${USR}" || -z "${DST}" ]]; then
-  log "Error - USR or DST not set"
-  exit 1
-fi 
 
 ssh -p $PORT $USR@$DST whoami && log "ssh is ok"
+touch $SRC/test && rm $SRC/test && log "Read/Write OK on source"
+touch $SRC/test && scp -P $PORT $SRC/test $USR@$DST:/ && log "SCP working ok"
+
