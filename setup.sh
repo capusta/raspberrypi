@@ -11,9 +11,8 @@ SSH_CFG=/etc/ssh/sshd_config
 test -e /boot/ssh || touch /boot/ssh
 
 # Do not do root login, and enforce ssh keys
-sed -i.bak1 's/^PermitRootLogin.*/PermitRootLogin no/g' $SSH_FN
-sed -i.bak2 's/^#PasswordAuthentication.*/PasswordAuthentication no/g' $SSH_FN
-
+sed -i.bak1 's/^PermitRootLogin.*/PermitRootLogin no/g' $SSH_CFG
+sed -i.bak2 's/^#PasswordAuthentication.*/PasswordAuthentication no/g' $SSH_CFG
 VPN_CFG=/etc/openvpn/login.conf
 if [ -e $VPN_CFG ]; then
   echo 'Openvpn is configured - check username / password'
