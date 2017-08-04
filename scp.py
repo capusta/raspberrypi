@@ -23,6 +23,10 @@ def main():
     deluge_info = check_output(arg)
   global dl_base
   dl_base = set_download_location()
+  if dl_base == '/dev/null':
+    log("ERROR: Unable to determine download location")
+    os.exit(1)
+  log('Download location set to {0}'.format(dl_base))
 
   for line in deluge_info:
     if line.strip() == '':
@@ -34,6 +38,14 @@ def main():
       copy_file(name, line.split(': ')[1])
       name = False
       continue
+
+def copy_file(name, id):
+  fname = os.path.join(dl_base,name)
+  if not os.path.isfile(fname):
+    log("Not finished: {0}".format(fname))
+    return
+
+  return
 
 ### Ingest and parse credentials file.  Format "key=value" ... no quotes
 def check_creds():
