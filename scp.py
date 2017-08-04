@@ -27,6 +27,8 @@ def main():
     arg = ('deluge-console info').split(' ')
     deluge_info_raw = check_output(arg)
   log('Found {0} lines ... parsing'.format(len(deluge_info_raw)))
+  dl = set_download_location()
+  log('Download location set to {0}'.format(dl))
 
   ## Main Loop
   name = False
@@ -63,6 +65,21 @@ def check_output(command):
 
 def check_call(command):
   subprocess.check_call(command)
+
+def set_download_location():
+  o = check_output("deluge-console config move_completed move_completed_path download_location".split(' ')).split("\n")
+  dl = ""
+  for line in o:
+    line = line.strip().split(': ')
+    if line.strip() == '':
+      continue
+    if 'download_location' in line[0]:
+      dl = line[1] 
+      continue
+    if 'move_completed' in line[0] and 'False' in line[1]:
+        log('Found download location {0}'.format(line[1]))
+        break
+  return dl
 
 def log(line):
   if isinstance(line, list):
