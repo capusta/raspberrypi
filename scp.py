@@ -5,45 +5,37 @@ import os
 
 deluge_file ='deluge.info'
 scp_creds_file = '.scp_creds'
-clean_up = False
+dl_base = '/dev/null'
 deluge_info = {}
-deluge_info_raw = {}
 
 def main():
   ''' Primary Script of corrolating files and removing known completed files from deluge '''
+  name = False
   check_creds()
-  check_call(['whoami'])
-
-  if clean_up:
-    os.remove(deluge_file)
-    log("Removed {0}".format(deluge_file))
 
   if os.path.isfile(deluge_file) and os.path.getsize(deluge_file) > 0:
     log('Using provided file: {0}'.format(deluge_file))
     with open(deluge_file,'r') as f:
-      deluge_info_raw = f.readlines()
+      deluge_info = f.readlines()
   else:
     log('Checking deluge client for info')
     arg = ('deluge-console info').split(' ')
-    deluge_info_raw = check_output(arg)
-  log('Found {0} lines ... parsing'.format(len(deluge_info_raw)))
-  dl = set_download_location()
-  log('Download location set to {0}'.format(dl))
+    deluge_info = check_output(arg)
+  global dl_base
+  dl_base = set_download_location()
 
-  ## Main Loop
-  name = False
-  for line in deluge_info_raw:
+  for line in deluge_info:
     if line.strip() == '':
       continue
     if 'Name: ' in line:
       name = line.strip().split(': ')[1]
       continue
     if name and 'ID: ' in line:
-      id = line.split(': ')[1]
-      deluge_info[name] = id
+      copy_file(name, line.split(': ')[1])
       name = False
       continue
 
+### Ingest and parse credentials file.  Format "key=value" ... no quotes
 def check_creds():
   c = os.path.isfile(scp_creds_file) and os.path.getsize(scp_creds_file) > 0
   if not c:
@@ -67,8 +59,10 @@ def check_call(command):
   subprocess.check_call(command)
 
 def set_download_location():
+  if "DL_SRC" in os.environ:
+    return os.environ['DL_SRC']
   o = check_output("deluge-console config move_completed move_completed_path download_location".split(' ')).split("\n")
-  dl = ""
+  dl = None
   for line in o:
     line = line.strip().split(': ')
     if line.strip() == '':
