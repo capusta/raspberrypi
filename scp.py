@@ -44,7 +44,6 @@ def copy_file(name, id):
   if not os.path.isfile(fname):
     log("Not finished: {0}".format(fname))
     return
-
   return
 
 ### Ingest and parse credentials file.  Format "key=value" ... no quotes
@@ -71,14 +70,15 @@ def check_call(command):
   subprocess.check_call(command)
 
 def set_download_location():
-  if "DL_SRC" in os.environ:
-    return os.environ['DL_SRC']
+  if "SRC" in os.environ:
+    return os.environ['SRC']
   o = check_output("deluge-console config move_completed move_completed_path download_location".split(' ')).split("\n")
+  print(o)
   dl = None
   for line in o:
-    line = line.strip().split(': ')
     if line.strip() == '':
       continue
+    line = line.strip().split(': ')
     if 'download_location' in line[0]:
       dl = line[1] 
       continue
@@ -94,3 +94,4 @@ def log(line):
   check_call(['logger','-t','overwatch',line])
 
 main()
+
