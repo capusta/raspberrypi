@@ -6,12 +6,13 @@ import os
 deluge_file ='deluge.info'
 scp_creds_file = '.scp_creds'
 dl_base = '/dev/null'
-deluge_info = {}
+deluge_info = []
 
 def main():
   ''' Primary Script of corrolating files and removing known completed files from deluge '''
   name = False
   check_creds()
+  global dl_base
 
   if os.path.isfile(deluge_file) and os.path.getsize(deluge_file) > 0:
     log('Using provided file: {0}'.format(deluge_file))
@@ -19,9 +20,10 @@ def main():
       deluge_info = f.readlines()
   else:
     log('Checking deluge client for info')
-    arg = ('deluge-console info').split(' ')
-    deluge_info = check_output(arg)
-  global dl_base
+    command = "deluge-console info".split(' ')
+    global deluge_info
+    deluge_info = check_output(command).split("\n")
+  print('deluge info is '.format(deluge_info))
   dl_base = set_download_location()
   if dl_base == '/dev/null':
     log("ERROR: Unable to determine download location")
@@ -44,6 +46,12 @@ def copy_file(name, id):
   if not os.path.isfile(fname):
     log("Not finished: {0}".format(fname))
     return
+  command = 'scp -P {3} {0} {1}@{2}:{4}'.format(fname,os.environ['USR'],os.environ['HOST'],os.environ['PORT'],os.environ['DST'])
+  log('Executing: {0}'.format(command))
+  check_call(command.split(' '))
+  command = 'deluge-console rm --remove_data {0}'.format(id)
+  log('Executing: {0}'.format(command))
+  check_call(command.split(' '))
   return
 
 ### Ingest and parse credentials file.  Format "key=value" ... no quotes
@@ -62,6 +70,16 @@ def check_creds():
       except:
         log("Ignoring configuration item: {0}".format(line))
         continue
+  if not 'PORT' in os.environ:
+    os.environ['PORT'] = '22'
+    log('Setting PORT: 22')
+  if not 'USR' in os.environ:
+    u = check_output(['whoami'])
+    os.environ['USR'] = u
+    log('Setting USR: {0}'.format(u))
+  if not 'DST' in os.environ:
+    os.environ['DST'] = '/'
+    log('Setting DST: /')
 
 def check_output(command):
   return subprocess.check_output(command,universal_newlines=True)
