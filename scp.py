@@ -43,7 +43,7 @@ def main():
 
 def copy_file(name, id):
   fname = os.path.join(dl_base,name)
-  if not os.path.isfile(fname):
+  if not (os.path.isfile(fname) or os.path.isdir(fname)):
     log("Not finished: {0}".format(fname))
     return
   command = 'scp -P {3} {0} {1}@{2}:{4}'.format(fname,os.environ['USR'],os.environ['HOST'],os.environ['PORT'],os.environ['DST'])
