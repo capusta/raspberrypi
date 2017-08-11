@@ -46,9 +46,10 @@ def copy_file(name, id):
   if not (os.path.isfile(fname) or os.path.isdir(fname)):
     log("Not finished: {0}".format(fname))
     return
-  command = 'scp -P {3} {0} {1}@{2}:{4}'.format(fname,os.environ['USR'],os.environ['HOST'],os.environ['PORT'],os.environ['DST'])
+  command = 'scp -r -P {3} "{0}" {1}@{2}:{4}'.format(fname,os.environ['USR'],os.environ['HOST'],os.environ['PORT'],os.environ['DST'])
   log('Executing: {0}'.format(command))
-  check_call(command.split(' '))
+  os.system(command)
+  #subprocess.check_call(command.split(' '),shell=True)
   command = 'deluge-console rm --remove_data {0}'.format(id)
   log('Executing: {0}'.format(command))
   check_call(command.split(' '))
