@@ -2,6 +2,7 @@
 
 import subprocess
 import os
+import sys
 
 deluge_file ='deluge.info'
 scp_creds_file = '.scp_creds'
@@ -27,7 +28,7 @@ def main():
   dl_base = set_download_location()
   if dl_base == '/dev/null':
     log("ERROR: Unable to determine download location")
-    os.exit(1)
+    sys.exit(1)
   log('Download location set to {0}'.format(dl_base))
 
   for line in deluge_info:
@@ -67,20 +68,18 @@ def check_creds():
         k = line[0]
         v = line[1]
         os.environ[k] = v
-        log("Setting {0} = {1}".format(k,os.environ[k]))
       except:
         log("Ignoring configuration item: {0}".format(line))
         continue
   if not 'PORT' in os.environ:
     os.environ['PORT'] = '22'
-    log('Setting PORT: 22')
   if not 'USR' in os.environ:
     u = check_output(['whoami'])
     os.environ['USR'] = u
-    log('Setting USR: {0}'.format(u))
   if not 'DST' in os.environ:
     os.environ['DST'] = '/'
-    log('Setting DST: /')
+  log("Using connection string: {0}@{1}:{2}{3}".format(
+    os.environ['USR'],os.environ['HOST'],os.environ['PORT'],os.environ['DST']))
 
 def check_output(command):
   return subprocess.check_output(command,universal_newlines=True)
