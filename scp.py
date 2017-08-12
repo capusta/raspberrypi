@@ -7,6 +7,7 @@ import sys
 deluge_file ='deluge.info'
 scp_creds_file = '.scp_creds'
 dl_base = '/dev/null'
+global deluge_info 
 deluge_info = []
 
 def main():
@@ -15,6 +16,11 @@ def main():
   check_creds()
   global dl_base
 
+  res = os.system('ping -c 1 ' + os.environ['HOST'])
+  if res != 0:
+    log(os.environ['HOST'] + ' is offline')
+    sys.exit(1)
+
   if os.path.isfile(deluge_file) and os.path.getsize(deluge_file) > 0:
     log('Using provided file: {0}'.format(deluge_file))
     with open(deluge_file,'r') as f:
@@ -22,7 +28,7 @@ def main():
   else:
     log('Checking deluge client for info')
     command = "deluge-console info".split(' ')
-    global deluge_info
+    #global deluge_info
     deluge_info = check_output(command).split("\n")
   print('deluge info is '.format(deluge_info))
   dl_base = set_download_location()
