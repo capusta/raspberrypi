@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#TODO: die if another scp is running
 import subprocess
 import os
 import sys
