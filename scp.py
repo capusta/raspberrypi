@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#TODO: die if another scp is running
 import subprocess
 import os
 import sys
@@ -12,6 +11,18 @@ deluge_info = []
 
 def main():
   ''' Primary Script of corrolating files and removing known completed files from deluge '''
+
+  # Check for already-active scp session
+  scp_active = False
+  try:
+    scp_active = check_output('pidof scp'.split(' '))
+  except:
+    log("SCP is not active")
+
+  if scp_active:
+    log("SCP is active.  Exiting")
+    sys.exit(1)
+
   name = False
   check_creds()
   global dl_base
