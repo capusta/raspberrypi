@@ -13,11 +13,11 @@ def main():
   ''' Primary Script of corrolating files and removing known completed files from deluge '''
 
   # Check for already-active scp session
-  scp_active = False
   try:
     scp_active = check_output('pidof scp'.split(' '))
   except:
     log("SCP is not active")
+    scp_active = False
 
   if scp_active:
     log("SCP is active.  Exiting")
@@ -95,8 +95,9 @@ def check_creds():
     os.environ['USR'] = u
   if not 'DST' in os.environ:
     os.environ['DST'] = '/'
-  log("Using connection string: {0}@{1}:{2}{3}".format(
-    os.environ['USR'],os.environ['HOST'],os.environ['PORT'],os.environ['DST']))
+  log("Using connection string: {0}@{1} and checking ssh and checking ssh ".format(os.environ['USR'],os.environ['HOST']))
+  s = "ssh {0}@{1} -p {2} -o ConnectTimeout=10 ls".format(os.environ['USR'],os.environ['HOST'],os.environ['PORT'])
+  check_output(s.split(' '))
 
 def check_output(command):
   return subprocess.check_output(command,universal_newlines=True)
