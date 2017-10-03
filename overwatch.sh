@@ -1,26 +1,39 @@
 #! /bin/bash
 
+cd "$(dirname "$0")"
+
 . common.sh
 
 # Check to see if OpenVPN and Deluge daemon are running
 ps -ef | grep -qi "[o]penvpn --config" && OPENVPN=true
-pgrep "deluge" && DELUGE=true
+pgrep "deluged" && DELUGE=true
 
 # Profile is chosen randomly by default ... or flip to override
 PROFILE='/etc/openvpn/Denmark.ovpn'
-PROFILE=$(find /etc/openvpn/*.ovpn | grep -v ' ' | shuf -n 1)
+PROFILE=$(find /etc/openvpn/*.ovpn | grep -v 'US ' | shuf -n 1)
+
+# First check what is our public IP 
+IP=$(curl -m 10 -s ipinfo.io/ip)
+STS=$?
+if [[ $STS == 28 ]]; then
+  # We have lost connectivity, better start over
+  log "Connectivity lost, killing delug and openvpn"
+  sudo pkill deluged || true
+  sudo pkill openvpn || true
+  exit 1
+fi
 
 if [[ -z $OPENVPN ]]; then
-  OLD_IP=$(curl -s ipinfo.io/ip)
+  OLD_IP=$IP
   log "Current IP: $OLD_IP Starting openvpn to $PROFILE"
   pushd /etc/openvpn > /dev/null
   /usr/sbin/openvpn --config $PROFILE >> /var/log/vpn.log 2>&1 &
   STS=$!
-  sleep 10
+  sleep 20
   popd
-  log "woke up, looking for $STS"
+  log "woke up, looking for pid $STS"
   ps -ef | grep "$STS" && OPENVPN=true
-  NEW_IP=$(curl -s ipinfo.io/ip)
+  NEW_IP=$(curl -m 5 -s ipinfo.io/ip)
   log "curl command complete."
   if [[ "$OLD_IP" == "$NEW_IP" ]]; then
     log "ERROR: new IP $NEW_IP is not changing when using VPN, exiting"
@@ -36,7 +49,7 @@ if [[ -z $DELUGE ]]; then
   su - pi -c 'deluged &'
   STS=$!
   sleep 3
-  ps -ef | grep "$STS" && DELUGE=true
+  ps -ef | grep -q "$STS" && DELUGE=true
   log "Started Deluge"
 fi
 

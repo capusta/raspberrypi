@@ -127,7 +127,7 @@ def log(line):
   if isinstance(line, list):
     line = " ".join(line)
   print('[overwatch-py]: {0}'.format(line))
-  check_call(['logger','-t','overwatch',line])
+  check_call(['logger','-t','overwatch-py',line])
 
 main()
 
