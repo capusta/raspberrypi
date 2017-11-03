@@ -1,0 +1,21 @@
+# Host - can be ip or dns name
+HOST=myfileserver
+HOST=192.168.1.10
+
+# mandatory
+USR=user
+
+# Server ssh port
+# Default: 22
+PORT=6532
+
+# Location of files on raspberri pi
+# Will be set for deluge daemon
+# mandatory!
+SRC=/home/pi/Downloads
+
+# Location on server for files
+# Can be defined by the ssh home dir on server
+# Default: ~
+DST=/path/to/destination/
+
