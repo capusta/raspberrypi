@@ -58,8 +58,14 @@ def main():
       name = False
       continue
 
+def find_dynamic_destination(filename):
+  scp_creds_file = 'classifier'
+  c = os.path.isfile(scp_creds_file) and os.path.getsize(scp_creds_file) > 0
+  if not c:
+    return
 def copy_file(name, id):
   fname = os.path.join(dl_base,name)
+  find_dynamic_destination(fname)
   if not (os.path.isfile(fname) or os.path.isdir(fname)):
     log("Not finished: {0}".format(fname))
     return
