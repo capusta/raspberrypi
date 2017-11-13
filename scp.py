@@ -41,7 +41,6 @@ def main():
     command = "deluge-console info".split(' ')
     #global deluge_info
     deluge_info = check_output(command).split("\n")
-  print('deluge info is '.format(deluge_info))
   dl_base = set_download_location()
   if dl_base == '/dev/null':
     log("ERROR: Unable to determine download location")
@@ -109,7 +108,6 @@ def set_download_location():
   if "SRC" in os.environ:
     return os.environ['SRC']
   o = check_output("deluge-console config move_completed move_completed_path download_location".split(' ')).split("\n")
-  print(o)
   dl = None
   for line in o:
     if line.strip() == '':
