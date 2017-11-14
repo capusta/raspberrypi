@@ -63,6 +63,13 @@ def find_dynamic_destination(filename):
   c = os.path.isfile(scp_creds_file) and os.path.getsize(scp_creds_file) > 0
   if not c:
     return
+  with open(scp_creds_file,'r') as f:
+    for line in f:
+      line = line.strip().split('::')
+      regex = re.compile(line[0]).search(filename.lower())
+      if regex is not None:
+        os.environ['DST'] = line[1] 
+
 def copy_file(name, id):
   fname = os.path.join(dl_base,name)
   find_dynamic_destination(fname)
