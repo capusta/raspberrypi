@@ -2,6 +2,7 @@
 import subprocess
 import os
 import sys
+import re
 
 deluge_file ='deluge.info'
 scp_creds_file = '.scp_creds'
