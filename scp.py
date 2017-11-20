@@ -77,7 +77,7 @@ def copy_file(name, id):
   if not (os.path.isfile(fname) or os.path.isdir(fname)):
     log("Not finished: {0}".format(fname))
     return
-  command = 'scp -r -P {3} "{0}" {1}@{2}:{4}'.format(fname,os.environ['USR'],os.environ['HOST'],os.environ['PORT'],os.environ['DST'])
+  command = 'scp -r "{0}" "{1}"'.format(fname,os.environ['DST'])
   log('Executing: {0}'.format(command))
   os.system(command)
   #subprocess.check_call(command.split(' '),shell=True)
