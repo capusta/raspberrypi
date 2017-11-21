@@ -108,9 +108,6 @@ def check_creds():
     os.environ['USR'] = u
   if not 'DST' in os.environ:
     os.environ['DST'] = '/'
-  log("Using connection string: {0}@{1} and checking ssh and checking ssh ".format(os.environ['USR'],os.environ['HOST']))
-  s = "ssh {0}@{1} -p {2} -o ConnectTimeout=10 ls".format(os.environ['USR'],os.environ['HOST'],os.environ['PORT'])
-  check_output(s.split(' '))
 
 def check_output(command):
   return subprocess.check_output(command,universal_newlines=True)
