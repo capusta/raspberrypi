@@ -66,21 +66,24 @@ def find_dynamic_destination(filename):
     return
   with open(scp_creds_file,'r') as f:
     for line in f:
-      line = line.strip().split('::')
-      regex = re.compile(line[0]).search(filename.lower())
-      if regex is not None:
-        os.environ['DST'] = line[1] 
+      try:
+        line = line.strip().split('::')
+        line[1]
+        regex = re.compile(line[0]).search(filename.lower())
+        if regex is not None:
+          os.environ['DST'] = line[1] 
+      except:
+        continue
 
 def copy_file(name, id):
   fname = os.path.join(dl_base,name)
   find_dynamic_destination(fname)
+  command = 'scp -r "{0}" "{1}"'.format(fname,os.environ['DST'])
+  log('Executing: {0}'.format(command))
   if not (os.path.isfile(fname) or os.path.isdir(fname)):
     log("Not finished: {0}".format(fname))
     return
-  command = 'scp -r "{0}" "{1}"'.format(fname,os.environ['DST'])
-  log('Executing: {0}'.format(command))
   os.system(command)
-  #subprocess.check_call(command.split(' '),shell=True)
   command = 'deluge-console rm --remove_data {0}'.format(id)
   log('Executing: {0}'.format(command))
   check_call(command.split(' '))
