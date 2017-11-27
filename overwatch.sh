@@ -27,7 +27,7 @@ if [[ -z $OPENVPN ]]; then
   OLD_IP=$IP
   log "Current IP: $OLD_IP Starting openvpn to $PROFILE"
   pushd /etc/openvpn > /dev/null
-  /usr/sbin/openvpn --config $PROFILE >> /var/log/vpn.log 2>&1 &
+  /usr/sbin/openvpn --config "$PROFILE" >> /var/log/vpn.log 2>&1 &
   STS=$!
   sleep 20
   popd
