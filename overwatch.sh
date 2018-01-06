@@ -15,7 +15,7 @@ PROFILE=$(find /etc/openvpn/*.ovpn | grep -v 'US ' | shuf -n 1)
 # First check what is our public IP 
 IP=$(curl -m 10 -s ipinfo.io/ip)
 STS=$?
-if [[ $STS == 28 ]]; then
+if [[ ($STS == 28) || ($STS == 7) ]]; then
   # We have lost connectivity, better start over
   log "Connectivity lost, killing delug and openvpn"
   sudo pkill deluged || true
