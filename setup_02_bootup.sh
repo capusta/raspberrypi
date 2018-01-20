@@ -16,7 +16,6 @@ function suffix(){
 
 function addOverwatch(){
     echo "/bin/bash $(pwd)/overwatch.sh &" >> "$RC_BACKUP"
-    sudo pip install pathlib
 }
 
 prefix
