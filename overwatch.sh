@@ -12,6 +12,13 @@ pgrep "deluged" && DELUGE=true
 PROFILE='/etc/openvpn/Denmark.ovpn'
 PROFILE=$(find /etc/openvpn/*.ovpn | grep -v 'US ' | shuf -n 1)
 
+if [[ -z $DELUGE || -z $OPENVPN ]]; then
+  log 'Error: deluge or Openvpn not running, killing both and exiting'
+  sudo pkill deluged || true
+  sudo pkill openvpn || true
+  exit 1
+fi
+
 # First check what is our public IP 
 IP=$(curl -m 10 -s ipinfo.io/ip)
 STS=$?
@@ -53,13 +60,6 @@ if [[ -z $DELUGE ]]; then
   log "Started Deluge"
 fi
 
-
-if [[ -z $DELUGE || -z $OPENVPN ]]; then
-  log 'Error: deluge or Openvpn not running, killing both and exiting'
-  sudo pkill deluged || true
-  sudo pkill openvpn || true
-  exit 1
-fi
 
 # Keep checking dummy torrent file to ensure our IP is correct
 DLG_TCH=/tmp/deluge_torrent_check
